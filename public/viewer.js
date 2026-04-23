@@ -400,10 +400,10 @@ canvas.addEventListener("mouseup", e => {
     // 🔥 Convert BOTH points to PDF space
     const [pdfStartX, pdfStartY] = currentViewport.convertToPdfPoint(startX, startY);
     const [pdfEndX, pdfEndY] = currentViewport.convertToPdfPoint(endX, endY);
-	const pageRotation = pageRotations[curPageNo] || 0;
+	const currentPageRotation = pageRotations[curPageNo] || 0;
     const newRedaction = {
         page: curPageNo,
-		rotation: pageRotation,
+		rotation:currentPageRotation,
         x: Math.min(pdfStartX, pdfEndX),
         y: Math.min(pdfStartY, pdfEndY),
         width: Math.abs(pdfEndX - pdfStartX),
