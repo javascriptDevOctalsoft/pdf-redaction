@@ -12,7 +12,7 @@ const OUTPUT_FILE = "./output/manual_redacted.pdf";
 export async function applyManualRedactions(redactions, docFileID, wsName) {
         let pdfDoc = null;
 		let sendingBlobUrl= "", redactedUuploadFileUrl= "";
-		if(wsName == "rsdv_zydus_dev"){
+		if(wsName == "rsdv_zydus_test"){
 			sendingBlobUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
 			redactedUuploadFileUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileReceive/getFile";
 		}else{
