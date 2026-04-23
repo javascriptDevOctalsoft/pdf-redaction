@@ -23,8 +23,10 @@ let zoomStatus = urlParams.get('zoomStatus');
 let docFileID= '';
 let activeTool = null;
 let undoStack = [];
+let pageRotations = {}; 
 //let scale = 1.2; // default
 let currentScale = 1.2;
+let currentViewport = null;
 const MIN_SCALE = 1.2;
 const MAX_SCALE = 2.0;
 if(docUrl != undefined){
@@ -178,8 +180,14 @@ function renderPage(num) {
         } else if (zoomStatus === "OUT") {
             currentScale = 1.2;
         } */
-
-                const viewport = page.getViewport({ scale: currentScale });
+		const rotation = pageRotations[num] || 0;
+		console.log("rotation---->", rotation)
+		const viewport = page.getViewport({
+			scale: currentScale,
+			rotation: rotation
+		});
+		currentViewport = viewport;
+                //const viewport = page.getViewport({ scale: currentScale });
 
                 //canvas.height = 600;
                 canvas.height = viewport.height;
@@ -218,14 +226,14 @@ function getMousePos(canvas, event) {
         const scaleY = canvas.height / rect.height;
 
         return {
-			x: (event.clientX - rect.left) * scaleX,
-			y: (event.clientY - rect.top) * scaleY
+                x: (event.clientX - rect.left) * scaleX,
+                y: (event.clientY - rect.top) * scaleY
         };
 }
 
 function undoLastRedaction() {
-	console.log("undoStack before", undoStack);
-	console.log("redactions before", undoStack);
+        console.log("undoStack before", undoStack);
+        console.log("redactions before", undoStack);
     if (undoStack.length === 0) return;
     const last = undoStack.pop();
     redactions = redactions.filter(r => r !== last);
@@ -237,6 +245,14 @@ function undoLastRedaction() {
     drawRedactions(curPageNo);
         renderPage(curPageNo);
     //baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function rotatePage(angle) {
+	console.log("rotatePage--->", rotatePage, "angle--->", angle);
+    const currentRotation = pageRotations[curPageNo] || 0;
+    pageRotations[curPageNo] = (currentRotation + angle) % 360;
+
+    renderPage(curPageNo);
 }
 
 document.getElementById("redactToolBtn").addEventListener("click", () => {
@@ -251,6 +267,14 @@ window.addEventListener("keydown", (e) => {
         canvas.style.cursor = "default";
                 document.getElementById("redactToolBtn").classList.remove("active");
     }
+});
+
+document.getElementById("rotateRight").addEventListener("click", () => {
+    rotatePage(90);
+});
+
+document.getElementById("rotateLeft").addEventListener("click", () => {
+    rotatePage(-90);
 });
 
 document.getElementById("prevBtn").addEventListener("click", () => {
@@ -365,40 +389,36 @@ canvas.addEventListener("mousemove", (e) => {
 
 canvas.addEventListener("mouseup", e => {
     if (!isDrawing || activeTool !== "redact") return;
-        isDrawing = false;
-        const pos = getMousePos(canvas, e);
-        const width = pos.x - startX;
-        const height = pos.y - startY;
 
-        // restore clean state first
-        if (baseImage) {
-                ctx.putImageData(baseImage, 0, 0);
-        }
+    isDrawing = false;
 
-        // 🔴 final fill
-        ctx.fillStyle = "black";
-        ctx.fillRect(startX, startY, width, height);
+    const pos = getMousePos(canvas, e);
 
-        const newRedaction = {
-                page: curPageNo,
-                x: startX / currentScale,
-                y: startY / currentScale,
-                width: width / currentScale,
-                height: height / currentScale
+    const endX = pos.x;
+    const endY = pos.y;
+
+    // 🔥 Convert BOTH points to PDF space
+    const [pdfStartX, pdfStartY] = currentViewport.convertToPdfPoint(startX, startY);
+    const [pdfEndX, pdfEndY] = currentViewport.convertToPdfPoint(endX, endY);
+
+    const newRedaction = {
+        page: curPageNo,
+        x: Math.min(pdfStartX, pdfEndX),
+        y: Math.min(pdfStartY, pdfEndY),
+        width: Math.abs(pdfEndX - pdfStartX),
+        height: Math.abs(pdfEndY - pdfStartY)
     };
 
-        redactions.push(newRedaction);
-        undoStack.push(newRedaction);
-        /* redactions.push({
-                        page: curPageNo,
-                        x: startX,
-                        y: startY,
-                        width: width,
-                        height: height
-        }); */
+    redactions.push(newRedaction);
+    undoStack.push(newRedaction);
 
-        // update snapshot again
-        baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    // redraw
+    if (baseImage) {
+        ctx.putImageData(baseImage, 0, 0);
+    }
+
+    drawRedactions(curPageNo);
+    baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
 });
 
 function showConfirm(callback){
@@ -415,7 +435,7 @@ function showConfirm(callback){
 }
 
 
-function drawRedactions(pageNum) {
+/*function drawRedactions(pageNum) {
         const pageRedactions = redactions.filter(r => r.page === pageNum);
         ctx.fillStyle = "black";
         pageRedactions.forEach(r => {
@@ -426,6 +446,28 @@ function drawRedactions(pageNum) {
             r.height * currentScale
                 );
         });
+}*/
+function drawRedactions(pageNum) {
+    const pageRedactions = redactions.filter(r => r.page === pageNum);
+
+    ctx.fillStyle = "black";
+
+    pageRedactions.forEach(r => {
+
+        // 🔥 Convert back to viewport (rotated + scaled)
+        const [x1, y1] = currentViewport.convertToViewportPoint(r.x, r.y);
+        const [x2, y2] = currentViewport.convertToViewportPoint(
+            r.x + r.width,
+            r.y + r.height
+        );
+
+        const drawX = Math.min(x1, x2);
+        const drawY = Math.min(y1, y2);
+        const drawW = Math.abs(x2 - x1);
+        const drawH = Math.abs(y2 - y1);
+
+        ctx.fillRect(drawX, drawY, drawW, drawH);
+    });
 }
 
 // function sendRedactions(){
