@@ -498,6 +498,7 @@ function sendRedactions(){
         })
         .then(response => {
                 response.blob();
+				console.log(response)
                 window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
                 document.getElementById("redactToolBtn").classList.remove("active");
 
