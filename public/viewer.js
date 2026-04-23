@@ -409,7 +409,7 @@ canvas.addEventListener("mouseup", e => {
         width: Math.abs(pdfEndX - pdfStartX),
         height: Math.abs(pdfEndY - pdfStartY)
     };
-
+	console.log("newRedaction--->", newRedaction)
     redactions.push(newRedaction);
     undoStack.push(newRedaction);
 
