@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PDF Redaction Editor</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" type="text/css" />
+	<!-- <script src="https://cdn.jsdelivr.net/npm/pdfjs-lib@0.0.149/build/pdf.min.js"></script> -->
+	
+	<script src="https://mozilla.github.io/pdf.js/build/pdf.mjs" type="module"></script>
+
+	<script type="module" src="viewer.js"></script>
+
+	<link rel="stylesheet" href="style.css">
+
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+	<!-- ===== TOP CONTROLS ===== -->
+    <div class="top-controls">
+        <!-- LEFT: PREVIOUS -->
+        <button id="prevBtn" class="icon-btn" title="Previous Page">
+            <span class="material-icons">chevron_left</span>
+        </button>
+        <!-- CENTER -->
+        <div class="center-controls">
+            <input type="number" id="srch" min="1" max="5" placeholder="Pg">
+            <button id="srchBtn" class="icon-btn" title="Search Page">
+				<div class="icon-img"><span class="material-icons">search</span></div>
+				<div class="icon-label"><span></span>Search</div>
+            </button>
+			<button id="redactToolBtn" class="icon-btn" title="Redact">
+				<div class="icon-img"><i class="fa-brands fa-hive"></i></div>
+				<div class="icon-label"><span></span>Redact</div>
+			</button>
+			<button id="undoBtn" class="icon-btn" title="Undo">
+				<div class="icon-img"><i class="fa-solid fa-rotate-left"></i></div>
+				<div class="icon-label"><span></span>Undo</div>
+			</button>
+            <button id="sendRedactions" class="icon-btn" title="Apply Redactions">
+				<div class="icon-img"><i class="fa-solid fa-floppy-disk"></i></div>
+				<div class="icon-label"><span></span>Apply</div>
+			</button>
+        </div>
+		
+		<div class="right-controls">
+			<!-- Page Indicator -->
+			<div id="pageIndicator" class="page-indicator">Page <span id="curPageNo">1</span> / <span id="totalPage">7</span></div>
+			
+			<!-- RIGHT: NEXT -->
+			<button id="nextBtn" class="icon-btn" title="Next Page">
+				<span class="material-icons">chevron_right</span>
+			</button>
+		</div>
+		
+    </div>
+
+    <!-- ===== PDF VIEWER ===== -->
+    <div class="pdf-container">
+        <canvas id="pdfCanvas"></canvas>
+
+        <!-- ZOOM BUTTONS -->
+        <button type="button" class="sticky_plus" title="Zoom In">
+            <span class="material-icons">add</span>
+        </button>
+
+        <button type="button" class="sticky_minus" title="Zoom Out">
+            <span class="material-icons">remove</span>
+        </button>
+    </div>
+	<div id="confirmModal" class="modal">
+		<div class="modal-box">
+			<p>Are you sure you want to apply these redactions?</p>
+			<div class="modal-actions">
+				<button id="confirmYes" class="icon-btn" >OK</button>
+				<button id="confirmNo" class="icon-btn" >Cancel</button>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
