@@ -1,4 +1,4 @@
-import fs from "fs";
+/*import fs from "fs";*/
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { PDFDocument, rgb } from "pdf-lib";
 
