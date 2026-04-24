@@ -177,6 +177,10 @@ function renderPage(num) {
 		document.getElementById("sendRedactions").style.pointerEvents = "none";
 		document.getElementById("sendRedactions").style.backgroundColor = "transparent";
 		document.getElementById("sendRedactions").style.color = "#515172";
+	}else{
+		document.getElementById("sendRedactions").style.pointerEvents = "";
+		document.getElementById("sendRedactions").style.backgroundColor = "#9fbde626";
+		document.getElementById("sendRedactions").style.color = "#285b9c";
 	}
 	pdfDoc.getPage(num).then(function(page) {
 		/* currentScale= 1.2;
