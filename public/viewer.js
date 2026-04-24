@@ -173,6 +173,11 @@ function setZoomStatus() {
 } */
 
 function renderPage(num) {
+	if(redactions.length == 0){
+		document.getElementById("rotateRight").style.pointerEvents = "none";
+		document.getElementById("rotateRight").style.backgroundColor = "transparent";
+		document.getElementById("rotateRight").style.color = "#515172";
+	}
 	pdfDoc.getPage(num).then(function(page) {
 		/* currentScale= 1.2;
 		if (zoomStatus === "IN") {
@@ -219,15 +224,13 @@ function renderPage(num) {
 }
 
 function getMousePos(canvas, event) {
-        const rect = canvas.getBoundingClientRect();
-
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-
-        return {
-                x: (event.clientX - rect.left) * scaleX,
-                y: (event.clientY - rect.top) * scaleY
-        };
+	const rect = canvas.getBoundingClientRect();
+	const scaleX = canvas.width / rect.width;
+	const scaleY = canvas.height / rect.height;
+	return {
+		x: (event.clientX - rect.left) * scaleX,
+		y: (event.clientY - rect.top) * scaleY
+	};
 }
 
 function undoLastRedaction() {
@@ -448,7 +451,7 @@ function showConfirm(callback){
 }*/
 function drawRedactions(pageNum) {
     const pageRedactions = redactions.filter(r => r.page === pageNum);
-
+	
     ctx.fillStyle = "black";
 
     pageRedactions.forEach(r => {
