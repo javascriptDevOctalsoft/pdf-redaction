@@ -177,10 +177,6 @@ function renderPage(num) {
 		document.getElementById("sendRedactions").style.pointerEvents = "none";
 		document.getElementById("sendRedactions").style.backgroundColor = "transparent";
 		document.getElementById("sendRedactions").style.color = "#515172";
-	}else{
-		document.getElementById("sendRedactions").style.pointerEvents = "";
-		document.getElementById("sendRedactions").style.backgroundColor = "#9fbde626";
-		document.getElementById("sendRedactions").style.color = "#285b9c";
 	}
 	pdfDoc.getPage(num).then(function(page) {
 		/* currentScale= 1.2;
@@ -240,7 +236,12 @@ function getMousePos(canvas, event) {
 function undoLastRedaction() {
         //console.log("undoStack before", undoStack);
         //console.log("redactions before", undoStack);
-    if (undoStack.length === 0) return;
+    if(undoStack.length === 0) return;
+	if(undoStack.length === 1){
+		document.getElementById("sendRedactions").style.pointerEvents = "none";
+		document.getElementById("sendRedactions").style.backgroundColor = "transparent";
+		document.getElementById("sendRedactions").style.color = "#515172";
+	}
     const last = undoStack.pop();
     redactions = redactions.filter(r => r !== last);
         //console.log("undoStack after", undoStack);
@@ -417,6 +418,11 @@ canvas.addEventListener("mouseup", e => {
 	//console.log("newRedaction--->", newRedaction)
     redactions.push(newRedaction);
     undoStack.push(newRedaction);
+	if(redactions.length > 0){
+		document.getElementById("sendRedactions").style.pointerEvents = "auto";
+		document.getElementById("sendRedactions").style.backgroundColor = "#9fbde626";
+		document.getElementById("sendRedactions").style.color = "#285b9c";
+	}
 
     // redraw
     if (baseImage) {
