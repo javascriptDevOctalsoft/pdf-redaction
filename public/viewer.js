@@ -1,6 +1,6 @@
 import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
 const urlParams = new URLSearchParams(window.location.search);
-console.log('window.location--->', window.location.search,  urlParams.get('docFileID'))
+//console.log('window.location--->', window.location.search,  urlParams.get('docFileID'))
 const docUrl = urlParams.get('docUrl');
 let wsName= urlParams.get('wsName');
 let docStatus= urlParams.get('docStatus');
@@ -17,7 +17,7 @@ if(docStatus != 1){
         document.getElementById("undoBtn").style.color = "#515172";
         document.getElementById("sendRedactions").style.color = "#515172";
 }
-console.log("wsName--->", wsName);
+//console.log("wsName--->", wsName);
 let prevSelPage = urlParams.get('prevSelPage');
 let zoomStatus = urlParams.get('zoomStatus');
 let docFileID= '';
@@ -30,13 +30,13 @@ let currentViewport = null;
 const MIN_SCALE = 1.2;
 const MAX_SCALE = 2.0;
 if(docUrl != undefined){
-        docFileID =urlParams.get('docFileID');
-        if(docFileID == ''){
-                var splitDocUrl= docUrl.split(':');
-                docFileID= splitDocUrl[splitDocUrl.length - 1]
-        }
-        console.log(urlParams, docUrl);
-        console.log("docFileID---->", docFileID);
+	docFileID =urlParams.get('docFileID');
+	if(docFileID == ''){
+			var splitDocUrl= docUrl.split(':');
+			docFileID= splitDocUrl[splitDocUrl.length - 1]
+	}
+	//console.log(urlParams, docUrl);
+	//console.log("docFileID---->", docFileID);
 }
 
 //const url = "./input/CP_16_24_ECRF_testing.pdf";
@@ -64,49 +64,49 @@ const canvas = document.getElementById("pdfCanvas");
 const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 async function loadPdfFromAPI(fileId) {
-        try {
-                const response = await fetch(apiUrl, {
-                        method: "POST",
-                        headers: {
-                                "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                                FILE_ID: fileId
-                        })
-                });
+	try {
+		const response = await fetch(apiUrl, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				FILE_ID: fileId
+			})
+		});
 
-                if (!response.ok) {
-                        throw new Error("Failed to fetch PDF");
-                }
+		if (!response.ok) {
+				throw new Error("Failed to fetch PDF");
+		}
 
-                const arrayBuffer = await response.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-                pdfDoc = pdf;
+		const arrayBuffer = await response.arrayBuffer();
+		const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+		pdfDoc = pdf;
 
-                if (prevSelPage != "null") {
-                                                console.log("inside if", prevSelPage);
-                        curPageNo = parseInt(prevSelPage);
-                } else {
-                        curPageNo = 1;
-                                                console.log("inside else", prevSelPage);
-                }
-                                console.log("prevSelPage", prevSelPage);
-                renderPage(curPageNo);
-                document.getElementById('srch').value = curPageNo;
+		if (prevSelPage != "null") {
+			//console.log("inside if", prevSelPage);
+			curPageNo = parseInt(prevSelPage);
+		} else {
+			curPageNo = 1;
+			//console.log("inside else", prevSelPage);
+		}
+		//console.log("prevSelPage", prevSelPage);
+		renderPage(curPageNo);
+		document.getElementById('srch').value = curPageNo;
 
-                // handle zoom
-                /* if (zoomStatus === "IN") {
-                        const viewport = page.getViewport({ scale: 1.5 });
-                        canvas.width = viewport.width;
-                        canvas.height = viewport.height;
-                } else if (zoomStatus === "OUT") {
-                        canvas.removeAttribute("style");
-                } */
+		// handle zoom
+		/* if (zoomStatus === "IN") {
+				const viewport = page.getViewport({ scale: 1.5 });
+				canvas.width = viewport.width;
+				canvas.height = viewport.height;
+		} else if (zoomStatus === "OUT") {
+				canvas.removeAttribute("style");
+		} */
 
-                console.log("PDF loaded from API");
-        } catch (err) {
-                console.error("Error loading PDF:", err);
-        }
+		//console.log("PDF loaded from API");
+	} catch (err) {
+		//console.error("Error loading PDF:", err);
+	}
 }
 
 loadPdfFromAPI(docFileID);
@@ -135,10 +135,10 @@ loadPdfFromAPI(docFileID);
         });
  */
 function setPage(num){
-        window.parent.postMessage(
-                { type: "SET_PAGE_NO", value: num},
-                "*"
-        );
+	window.parent.postMessage(
+		{ type: "SET_PAGE_NO", value: num},
+		"*"
+	);
 }
 
 /* function setZoomStatus(){
@@ -173,50 +173,49 @@ function setZoomStatus() {
 } */
 
 function renderPage(num) {
-        pdfDoc.getPage(num).then(function(page) {
-                /* currentScale= 1.2;
-        if (zoomStatus === "IN") {
-            currentScale = 1.4;
-        } else if (zoomStatus === "OUT") {
-            currentScale = 1.2;
-        } */
+	pdfDoc.getPage(num).then(function(page) {
+		/* currentScale= 1.2;
+		if (zoomStatus === "IN") {
+			currentScale = 1.4;
+		} else if (zoomStatus === "OUT") {
+			currentScale = 1.2;
+		} */
 		const rotation = pageRotations[num] || 0;
-		console.log("rotation---->", rotation)
+		//console.log("rotation---->", rotation)
 		const viewport = page.getViewport({
 			scale: currentScale,
 			rotation: rotation
 		});
 		currentViewport = viewport;
-                //const viewport = page.getViewport({ scale: currentScale });
+		//const viewport = page.getViewport({ scale: currentScale });
+	
+		//canvas.height = 600;
+		canvas.height = viewport.height;
+		canvas.width = viewport.width;
 
-                //canvas.height = 600;
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+		// 🚨 cancel previous render
+		if (renderTask) {
+			renderTask.cancel();
+		}
+	
+		renderTask = page.render({
+			canvasContext: ctx,
+			viewport: viewport
+		});
 
-                // 🚨 cancel previous render
-                if (renderTask) {
-                                renderTask.cancel();
-                }
-
-                renderTask = page.render({
-                                canvasContext: ctx,
-                                viewport: viewport
-                });
-
-                setPage(num);
-                document.getElementById('curPageNo').innerText= num;
-                document.getElementById('totalPage').innerText= pdfDoc.numPages;
-                renderTask.promise.then(() => {
-                                drawRedactions(num);
-
-                                // 📸 save snapshot AFTER render
-                                baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                }).catch(err => {
-                                if (err.name !== "RenderingCancelledException") {
-                                                console.error(err);
-                                }
-                });
-        });
+		setPage(num);
+		document.getElementById('curPageNo').innerText= num;
+		document.getElementById('totalPage').innerText= pdfDoc.numPages;
+		renderTask.promise.then(() => {
+			drawRedactions(num);
+			// 📸 save snapshot AFTER render
+			baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		}).catch(err => {
+			if (err.name !== "RenderingCancelledException") {
+				//console.error(err);
+			}
+		});
+	});
 }
 
 function getMousePos(canvas, event) {
@@ -232,40 +231,39 @@ function getMousePos(canvas, event) {
 }
 
 function undoLastRedaction() {
-        console.log("undoStack before", undoStack);
-        console.log("redactions before", undoStack);
+        //console.log("undoStack before", undoStack);
+        //console.log("redactions before", undoStack);
     if (undoStack.length === 0) return;
     const last = undoStack.pop();
     redactions = redactions.filter(r => r !== last);
-        console.log("undoStack after", undoStack);
-        console.log("redactions after", redactions);
+        //console.log("undoStack after", undoStack);
+        //console.log("redactions after", redactions);
     if (baseImage) {
-                ctx.putImageData(baseImage, 0, 0);
+		ctx.putImageData(baseImage, 0, 0);
     }
     drawRedactions(curPageNo);
-        renderPage(curPageNo);
+	renderPage(curPageNo);
     //baseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
 
 function rotatePage(angle) {
-	console.log("rotatePage--->", rotatePage, "angle--->", angle);
+	//console.log("rotatePage--->", rotatePage, "angle--->", angle);
     const currentRotation = pageRotations[curPageNo] || 0;
     pageRotations[curPageNo] = (currentRotation + angle) % 360;
-
     renderPage(curPageNo);
 }
 
 document.getElementById("redactToolBtn").addEventListener("click", () => {
     activeTool = "redact";
     canvas.style.cursor = "crosshair";
-        document.getElementById("redactToolBtn").classList.add("active");
+	document.getElementById("redactToolBtn").classList.add("active");
 });
 
 window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
         activeTool = null;
         canvas.style.cursor = "default";
-                document.getElementById("redactToolBtn").classList.remove("active");
+		document.getElementById("redactToolBtn").classList.remove("active");
     }
 });
 
@@ -278,37 +276,37 @@ document.getElementById("rotateRight").addEventListener("click", () => {
 // });
 
 document.getElementById("prevBtn").addEventListener("click", () => {
-        if (curPageNo > 1) {
-                curPageNo--;
-                renderPage(curPageNo);
-                document.getElementById("srch").value= curPageNo;
-        }
+	if (curPageNo > 1) {
+		curPageNo--;
+		renderPage(curPageNo);
+		document.getElementById("srch").value= curPageNo;
+	}
 });
 
 document.getElementById("nextBtn").addEventListener("click", () => {
-        if (curPageNo < pdfDoc.numPages) {
-                curPageNo++;
-                renderPage(curPageNo);
-                document.getElementById("srch").value= curPageNo;
-        }
+	if (curPageNo < pdfDoc.numPages) {
+		curPageNo++;
+		renderPage(curPageNo);
+		document.getElementById("srch").value= curPageNo;
+	}
 });
 
 document.getElementById("sendRedactions").addEventListener("click", () => {
-        showConfirm((result) => {
-                if (result) {
-                  sendRedactions();
-                }
-        });
+	showConfirm((result) => {
+		if (result) {
+		  sendRedactions();
+		}
+	});
 });
 
 document.getElementById("srchBtn").addEventListener("click", () => {
-        pageSearch();
+	pageSearch();
 });
 
 document.getElementById("srch").addEventListener("input", (e) => {
-        e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        var curElemVal= parseInt(e.target.value);
-        get_total_page(curElemVal);
+	e.target.value = e.target.value.replace(/[^0-9]/g, '');
+	var curElemVal= parseInt(e.target.value);
+	get_total_page(curElemVal);
 });
 
 /* document.getElementsByClassName("sticky_plus")[0].addEventListener("click", () => {
@@ -409,7 +407,7 @@ canvas.addEventListener("mouseup", e => {
         width: Math.abs(pdfEndX - pdfStartX),
         height: Math.abs(pdfEndY - pdfStartY)
     };
-	console.log("newRedaction--->", newRedaction)
+	//console.log("newRedaction--->", newRedaction)
     redactions.push(newRedaction);
     undoStack.push(newRedaction);
 
@@ -423,16 +421,16 @@ canvas.addEventListener("mouseup", e => {
 });
 
 function showConfirm(callback){
-        const modal = document.getElementById("confirmModal");
-        modal.style.display = "flex";
-        document.getElementById("confirmYes").onclick = () => {
-                modal.style.display = "none";
-                callback(true);
-        };
-        document.getElementById("confirmNo").onclick = () => {
-                modal.style.display = "none";
-                callback(false);
-        };
+	const modal = document.getElementById("confirmModal");
+	modal.style.display = "flex";
+	document.getElementById("confirmYes").onclick = () => {
+			modal.style.display = "none";
+			callback(true);
+	};
+	document.getElementById("confirmNo").onclick = () => {
+			modal.style.display = "none";
+			callback(false);
+	};
 }
 
 
@@ -486,48 +484,46 @@ function sendRedactions(){
     // Construct the payload including your extracted values
     const payload = {
         redactions: redactions,
-                docFileID: docFileID,
-                wsName: wsName
+		docFileID: docFileID,
+		wsName: wsName
     };
     fetch("/redact", {
-                        method: "POST",
-                        headers: {
-                                        "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(payload)
-        })
-        .then(response => {
-                response.blob();
-                window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
-                document.getElementById("redactToolBtn").classList.remove("active");
-
-        })
-        .then(blob => {
-                        // const url = window.URL.createObjectURL(blob);
-                        // const a = document.createElement("a");
-                        window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
-                        document.getElementById("redactToolBtn").classList.remove("active");
-        });
-        activeTool = null;
-        canvas.style.cursor = "default";
+		method: "POST",
+		headers: {
+						"Content-Type": "application/json"
+		},
+		body: JSON.stringify(payload)
+	})
+	.then(response => {
+		response.blob();
+		window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
+		document.getElementById("redactToolBtn").classList.remove("active");
+	})
+	.then(blob => {
+		// const url = window.URL.createObjectURL(blob);
+		// const a = document.createElement("a");
+		window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
+		document.getElementById("redactToolBtn").classList.remove("active");
+	});
+	activeTool = null;
+	canvas.style.cursor = "default";
 }
 
 function pageSearch(){
-        curPageNo = parseInt(document.getElementById("srch").value);
-        if(curPageNo<=pdfDoc.numPages && curPageNo>0 ){
-                renderPage(curPageNo);
-        }
-
+	curPageNo = parseInt(document.getElementById("srch").value);
+	if(curPageNo<=pdfDoc.numPages && curPageNo>0 ){
+		renderPage(curPageNo);
+	}
 }
 
 function get_total_page(e) {
-        var maxAttr = document.getElementById('srch').getAttribute('max');
-        if(e>pdfDoc.numPages) {
-                document.getElementById('srch').value = '';
-        }
-        if(maxAttr != pdfDoc.numPages) {
-                document.getElementById('srch').setAttribute('max',pdfDoc.numPages);
-        }
+	var maxAttr = document.getElementById('srch').getAttribute('max');
+	if(e>pdfDoc.numPages) {
+			document.getElementById('srch').value = '';
+	}
+	if(maxAttr != pdfDoc.numPages) {
+			document.getElementById('srch').setAttribute('max',pdfDoc.numPages);
+	}
 }
 
 
