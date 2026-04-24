@@ -99,6 +99,7 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
 					// Prefer the rotation that was active in the viewer when redaction was created
 					const effectiveRotation = typeof r.rotation === "number" ? r.rotation : pageRotation;
 					const rect = getRectForPageRotation(width, height, r, effectiveRotation);
+					console.log("rect 102----->", rect);
 					page.drawRectangle({
 						x: rect.x,
 						y: rect.y,
