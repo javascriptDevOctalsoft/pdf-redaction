@@ -174,9 +174,9 @@ function setZoomStatus() {
 
 function renderPage(num) {
 	if(redactions.length == 0){
-		document.getElementById("rotateRight").style.pointerEvents = "none";
-		document.getElementById("rotateRight").style.backgroundColor = "transparent";
-		document.getElementById("rotateRight").style.color = "#515172";
+		document.getElementById("sendRedactions").style.pointerEvents = "none";
+		document.getElementById("sendRedactions").style.backgroundColor = "transparent";
+		document.getElementById("sendRedactions").style.color = "#515172";
 	}
 	pdfDoc.getPage(num).then(function(page) {
 		/* currentScale= 1.2;
