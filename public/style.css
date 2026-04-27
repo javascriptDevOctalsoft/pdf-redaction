@@ -39,7 +39,7 @@ body {
 /* OPTIONAL: Perfect center alignment */
 .center-controls {
 	position: absolute;
-	left: 50%;
+	left: 45%;
 	transform: translateX(-50%);
 }
 
