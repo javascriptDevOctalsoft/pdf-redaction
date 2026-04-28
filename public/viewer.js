@@ -505,6 +505,21 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
     });
 
     const pdfBytes = await pdfDocLib.save();
+	// Create blob
+	const blob = new Blob([pdfBytes], { type: "application/pdf" });
+
+	// Create temporary download link
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement("a");
+
+	a.href = url;
+	a.download = "rotated.pdf"; // 👈 file name
+	document.body.appendChild(a);
+	a.click();
+
+	// Cleanup
+	document.body.removeChild(a);
+	URL.revokeObjectURL(url);
     return new Blob([pdfBytes], { type: "application/pdf" });
 }
 
