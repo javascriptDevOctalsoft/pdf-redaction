@@ -541,10 +541,10 @@ async function saveRotatedPdfIfNeeded() {
         const rotatedBlob = await generateRotatedPdfBlob(arrayBuffer);
 
         // call rotation API
+		console.log("docFileID---->", docFileID);
         await fetch(storeRotatedFileApiUrl, {
             method: "POST",
             headers: {
-				"Content-Type": "application/pdf",
                 "FILE_ID": docFileID
             },
             body: rotatedBlob
