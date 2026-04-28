@@ -560,7 +560,7 @@ async function sendRedactions(){
 	// save rotated PDF first (if needed)
 	await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
-    /* const payload = {
+    const payload = {
         redactions: redactions,
 		docFileID: docFileID,
 		wsName: wsName
@@ -568,7 +568,7 @@ async function sendRedactions(){
     fetch("/redact", {
 		method: "POST",
 		headers: {
-						"Content-Type": "application/json"
+			"Content-Type": "application/json"
 		},
 		body: JSON.stringify(payload)
 	})
@@ -584,7 +584,7 @@ async function sendRedactions(){
 		document.getElementById("redactToolBtn").classList.remove("active");
 	});
 	activeTool = null;
-	canvas.style.cursor = "default"; */
+	canvas.style.cursor = "default";
 }
 
 function pageSearch(){
