@@ -508,7 +508,7 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
 	// Create blob
 	const blob = new Blob([pdfBytes], { type: "application/pdf" });
 
-	// Create temporary download link
+/* 	// Create temporary download link
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement("a");
 
@@ -519,7 +519,7 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
 
 	// Cleanup
 	document.body.removeChild(a);
-	URL.revokeObjectURL(url);
+	URL.revokeObjectURL(url); */
     return blob;
 	//return pdfBytes;
 }
