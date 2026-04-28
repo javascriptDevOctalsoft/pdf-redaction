@@ -1,4 +1,5 @@
 import * as pdfjsLib from 'https://mozilla.github.io/pdf.js/build/pdf.mjs';
+import { PDFDocument, degrees } from "https://cdn.skypack.dev/pdf-lib";
 const urlParams = new URLSearchParams(window.location.search);
 //console.log('window.location--->', window.location.search,  urlParams.get('docFileID'))
 const docUrl = urlParams.get('docUrl');
@@ -492,17 +493,13 @@ function drawRedactions(pageNum){
 // }
 
 async function generateRotatedPdfBlob(originalArrayBuffer) {
-    //const pdfDocLib = await PDFDocument.load(originalArrayBuffer);
-    const pdfDocLib = await pdfjsLib.getDocument({ data: originalArrayBuffer }).promis;
-
-    const rotatedFilePages = pdfDocLib.getPages();
-
+    const pdfDocLib = await PDFDocument.load(originalArrayBuffer);
+    const pages = pdfDocLib.getPages();
     Object.keys(pageRotations).forEach(pageNum => {
         const index = parseInt(pageNum) - 1;
-        const curFileRotation = pageRotations[pageNum];
-
-        if (rotatedFilePages[index] && curFileRotation !== 0) {
-            rotatedFilePages[index].setRotation(degrees(curFileRotation));
+        const rotation = pageRotations[pageNum];
+        if (pages[index] && rotation !== 0) {
+            pages[index].setRotation(degrees(rotation));
         }
     });
 
@@ -541,7 +538,7 @@ async function saveRotatedPdfIfNeeded() {
     }
 }
 
-async function sendRedactions(){
+function sendRedactions(){
 	// save rotated PDF first (if needed)
 	await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
