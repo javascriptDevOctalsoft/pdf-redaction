@@ -40,11 +40,13 @@ if(docUrl != undefined){
 }
 
 //const url = "./input/CP_16_24_ECRF_testing.pdf";
-let apiUrl= "";
+let apiUrl= "", storeRotatedFileApiUrl="";
 if(wsName != "rsdv_zydus_dev" && wsName != "rsdv_zydus_test"){
         apiUrl= "https://ins6.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
+		//storeRotatedFileApiUrl= "https://bkp2.octalsoft.com/apex/rsdv_zydus_test/getFile1/rotatedFile";
 }else{
         apiUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
+		storeRotatedFileApiUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/getFile1/rotatedFile";
 }
 const url = apiUrl;
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://mozilla.github.io/pdf.js/build/pdf.worker.mjs';
@@ -76,17 +78,17 @@ async function loadPdfFromAPI(fileId) {
 		});
 
 		if (!response.ok) {
-				throw new Error("Failed to fetch PDF");
+			throw new Error("Failed to fetch PDF");
 		}
 
 		const arrayBuffer = await response.arrayBuffer();
 		const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 		pdfDoc = pdf;
 
-		if (prevSelPage != "null") {
+		if (prevSelPage != "null"){
 			//console.log("inside if", prevSelPage);
 			curPageNo = parseInt(prevSelPage);
-		} else {
+		}else{
 			curPageNo = 1;
 			//console.log("inside else", prevSelPage);
 		}
@@ -104,7 +106,7 @@ async function loadPdfFromAPI(fileId) {
 		} */
 
 		//console.log("PDF loaded from API");
-	} catch (err) {
+	}catch(err){
 		//console.error("Error loading PDF:", err);
 	}
 }
@@ -261,7 +263,8 @@ function rotatePage(angle) {
     renderPage(curPageNo);
 }
 
-document.getElementById("redactToolBtn").addEventListener("click", () => {
+document.getElementById("redactToolBtn").addEventListener("click", () =>
+{
     activeTool = "redact";
     canvas.style.cursor = "crosshair";
 	document.getElementById("redactToolBtn").classList.add("active");
@@ -357,7 +360,7 @@ function applyZoom(){
     localStorage.setItem("zoomVal", currentScale.toString());
     localStorage.setItem("currentScale", currentScale.toString());
     setZoomStatus();
-    if (pdfDoc) {
+    if(pdfDoc){
         renderPage(curPageNo);
     }
 }
@@ -376,20 +379,20 @@ canvas.addEventListener("mousedown", e=>{
 
 canvas.addEventListener("mousemove", (e) => {
     if (!isDrawing || activeTool !== "redact") return;
-        const pos = getMousePos(canvas, e);
-        const currentX = pos.x;
-        const currentY = pos.y;
-        const width = currentX - startX;
-        const height = currentY - startY;
-        // 🔥 Restore clean PDF (FAST, no re-render)
-        if (baseImage) {
-                        ctx.putImageData(baseImage, 0, 0);
-        }
-        // 🟦 Draw preview
-        ctx.fillStyle = "rgba(255,255,255,0.2)";
-        ctx.fillRect(startX, startY, width, height);
-        ctx.strokeStyle = "red";
-        ctx.strokeRect(startX, startY, width, height);
+	const pos = getMousePos(canvas, e);
+	const currentX = pos.x;
+	const currentY = pos.y;
+	const width = currentX - startX;
+	const height = currentY - startY;
+	// 🔥 Restore clean PDF (FAST, no re-render)
+	if (baseImage) {
+					ctx.putImageData(baseImage, 0, 0);
+	}
+	// 🟦 Draw preview
+	ctx.fillStyle = "rgba(255,255,255,0.2)";
+	ctx.fillRect(startX, startY, width, height);
+	ctx.strokeStyle = "red";
+	ctx.strokeRect(startX, startY, width, height);
 });
 
 
@@ -459,25 +462,20 @@ function showConfirm(callback){
                 );
         });
 }*/
-function drawRedactions(pageNum) {
+function drawRedactions(pageNum){
     const pageRedactions = redactions.filter(r => r.page === pageNum);
-	
     ctx.fillStyle = "black";
-
     pageRedactions.forEach(r => {
-
         // 🔥 Convert back to viewport (rotated + scaled)
         const [x1, y1] = currentViewport.convertToViewportPoint(r.x, r.y);
         const [x2, y2] = currentViewport.convertToViewportPoint(
             r.x + r.width,
             r.y + r.height
         );
-
         const drawX = Math.min(x1, x2);
         const drawY = Math.min(y1, y2);
         const drawW = Math.abs(x2 - x1);
         const drawH = Math.abs(y2 - y1);
-
         ctx.fillRect(drawX, drawY, drawW, drawH);
     });
 }
@@ -493,7 +491,59 @@ function drawRedactions(pageNum) {
         // })
 // }
 
+async function generateRotatedPdfBlob(originalArrayBuffer) {
+    //const pdfDocLib = await PDFDocument.load(originalArrayBuffer);
+    const pdfDocLib = await pdfjsLib.getDocument({ data: originalArrayBuffer }).promis;
+
+    const rotatedFilePages = pdfDocLib.getPages();
+
+    Object.keys(pageRotations).forEach(pageNum => {
+        const index = parseInt(pageNum) - 1;
+        const curFileRotation = pageRotations[pageNum];
+
+        if (rotatedFilePages[index] && curFileRotation !== 0) {
+            rotatedFilePages[index].setRotation(degrees(curFileRotation));
+        }
+    });
+
+    const pdfBytes = await pdfDocLib.save();
+    return new Blob([pdfBytes], { type: "application/pdf" });
+}
+
+async function saveRotatedPdfIfNeeded() {
+    // check if any rotation exists
+    const hasRotation = Object.values(pageRotations).some(r => r !== 0);
+    if (!hasRotation) return; // skip
+    try {
+        // fetch original PDF again
+        const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ FILE_ID: docFileID })
+        });
+        const arrayBuffer = await response.arrayBuffer();
+
+        // generate rotated version
+        const rotatedBlob = await generateRotatedPdfBlob(arrayBuffer);
+
+        // call rotation API
+        await fetch(storeRotatedFileApiUrl, {
+            method: "POST",
+            headers: {
+                "FILE_ID": docFileID
+            },
+            body: rotatedBlob
+        });
+        console.log("Rotated PDF saved successfully");
+    } catch (err) {
+        console.error("Rotation API failed:", err);
+        throw err;
+    }
+}
+
 function sendRedactions(){
+	// save rotated PDF first (if needed)
+	await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
     const payload = {
         redactions: redactions,
@@ -538,5 +588,4 @@ function get_total_page(e) {
 			document.getElementById('srch').setAttribute('max',pdfDoc.numPages);
 	}
 }
-
 
