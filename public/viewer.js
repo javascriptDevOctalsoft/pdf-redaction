@@ -560,31 +560,31 @@ async function sendRedactions(){
 	// save rotated PDF first (if needed)
 	await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
-    const payload = {
-        redactions: redactions,
-		docFileID: docFileID,
-		wsName: wsName
-    };
-    fetch("/redact", {
-		method: "POST",
-		headers: {
-						"Content-Type": "application/json"
-		},
-		body: JSON.stringify(payload)
-	})
-	.then(response => {
-		response.blob();
-		window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
-		document.getElementById("redactToolBtn").classList.remove("active");
-	})
-	.then(blob => {
-		// const url = window.URL.createObjectURL(blob);
-		// const a = document.createElement("a");
-		window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
-		document.getElementById("redactToolBtn").classList.remove("active");
-	});
-	activeTool = null;
-	canvas.style.cursor = "default";
+ //    const payload = {
+ //        redactions: redactions,
+	// 	docFileID: docFileID,
+	// 	wsName: wsName
+ //    };
+ //    fetch("/redact", {
+	// 	method: "POST",
+	// 	headers: {
+	// 					"Content-Type": "application/json"
+	// 	},
+	// 	body: JSON.stringify(payload)
+	// })
+	// .then(response => {
+	// 	response.blob();
+	// 	window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
+	// 	document.getElementById("redactToolBtn").classList.remove("active");
+	// })
+	// .then(blob => {
+	// 	// const url = window.URL.createObjectURL(blob);
+	// 	// const a = document.createElement("a");
+	// 	window.parent.postMessage({ type: "REDACTION_RESULT", value: "Redacted File Saved Successfully"}, "*");
+	// 	document.getElementById("redactToolBtn").classList.remove("active");
+	// });
+	// activeTool = null;
+	// canvas.style.cursor = "default";
 }
 
 function pageSearch(){
