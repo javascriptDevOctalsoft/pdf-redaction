@@ -541,7 +541,7 @@ async function saveRotatedPdfIfNeeded() {
     }
 }
 
-function sendRedactions(){
+async function sendRedactions(){
 	// save rotated PDF first (if needed)
 	await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
