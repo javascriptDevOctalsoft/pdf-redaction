@@ -520,7 +520,8 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
 	// Cleanup
 	document.body.removeChild(a);
 	URL.revokeObjectURL(url);
-    return new Blob([pdfBytes], { type: "application/pdf" });
+    /* return new Blob([pdfBytes], { type: "application/pdf" }); */
+	return pdfBytes;
 }
 
 async function saveRotatedPdfIfNeeded() {
@@ -543,6 +544,7 @@ async function saveRotatedPdfIfNeeded() {
         await fetch(storeRotatedFileApiUrl, {
             method: "POST",
             headers: {
+				"Content-Type": "application/pdf",
                 "FILE_ID": docFileID
             },
             body: rotatedBlob
