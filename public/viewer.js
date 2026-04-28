@@ -498,6 +498,7 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
     Object.keys(pageRotations).forEach(pageNum => {
         const index = parseInt(pageNum) - 1;
         const rotation = pageRotations[pageNum];
+		console.log("line no 501", pages[index] , rotation)
         if (pages[index] && rotation !== 0) {
             pages[index].setRotation(degrees(rotation));
         }
