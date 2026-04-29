@@ -520,8 +520,8 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
 	// Cleanup
 	document.body.removeChild(a);
 	URL.revokeObjectURL(url);
-    return rotatedBlobContent;
-	//return pdfBytes;
+    //return rotatedBlobContent;
+	return pdfBytes;
 }
 
 async function saveRotatedPdfIfNeeded() {
@@ -539,6 +539,7 @@ async function saveRotatedPdfIfNeeded() {
 
         // generate rotated version
         const rotatedBlob = await generateRotatedPdfBlob(arrayBuffer);
+		console.log("rotatedBlob--->", rotatedBlob)
 		const bufferData = await rotatedBlob.arrayBuffer();
         // call rotation API
 		console.log("docFileID---->", docFileID);
@@ -549,7 +550,7 @@ async function saveRotatedPdfIfNeeded() {
 				"Content-Type": "application/pdf",
                 // "FILE_ID": docFileID
             },
-            body: bufferData
+            body: rotatedBlob
         });
         console.log("Rotated PDF saved successfully");
     } catch (err) {
