@@ -284,9 +284,9 @@ window.addEventListener("keydown", (e) => {
     }
 });
 
-// document.getElementById("rotateRight").addEventListener("click", () => {
-//     rotatePage(90);
-// });
+document.getElementById("rotateRight").addEventListener("click", () => {
+    rotatePage(90);
+});
 
 // document.getElementById("rotateLeft").addEventListener("click", () => {
 //     rotatePage(-90);
@@ -565,7 +565,7 @@ async function saveRotatedPdfIfNeeded() {
 
 async function sendRedactions(){
 	// save rotated PDF first (if needed)
-	//await saveRotatedPdfIfNeeded();
+	await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
 	setTimeout(function(){
 		const payload = {
