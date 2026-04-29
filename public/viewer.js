@@ -565,7 +565,10 @@ async function saveRotatedPdfIfNeeded() {
 
 async function sendRedactions(){
 	// save rotated PDF first (if needed)
-	await saveRotatedPdfIfNeeded();
+	if(wsName == "rsdv_zydus_test"){
+		await saveRotatedPdfIfNeeded();
+	}
+	
     // Construct the payload including your extracted values
 	setTimeout(function(){
 		const payload = {
