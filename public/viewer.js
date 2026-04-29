@@ -539,7 +539,7 @@ async function saveRotatedPdfIfNeeded() {
 
         // generate rotated version
         const rotatedBlob = await generateRotatedPdfBlob(arrayBuffer);
-
+		const bufferData = await rotatedBlob.arrayBuffer();
         // call rotation API
 		console.log("docFileID---->", docFileID);
         //await fetch(storeRotatedFileApiUrl, {
@@ -549,7 +549,7 @@ async function saveRotatedPdfIfNeeded() {
 				"Content-Type": "application/pdf",
                 // "FILE_ID": docFileID
             },
-            body: rotatedBlob
+            body: bufferData
         });
         console.log("Rotated PDF saved successfully");
     } catch (err) {
