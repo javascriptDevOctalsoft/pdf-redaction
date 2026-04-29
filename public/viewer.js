@@ -545,6 +545,7 @@ async function saveRotatedPdfIfNeeded() {
         await fetch(storeRotatedFileApiUrl, {
             method: "POST",
             headers: {
+				"Content-Type": "application/pdf",
                 "FILE_ID": docFileID
             },
             body: rotatedBlob
