@@ -279,9 +279,9 @@ window.addEventListener("keydown", (e) => {
     }
 });
 
-document.getElementById("rotateRight").addEventListener("click", () => {
-    rotatePage(90);
-});
+// document.getElementById("rotateRight").addEventListener("click", () => {
+//     rotatePage(90);
+// });
 
 // document.getElementById("rotateLeft").addEventListener("click", () => {
 //     rotatePage(-90);
