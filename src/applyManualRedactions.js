@@ -116,6 +116,7 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
 				});
 
                 const bytes = await pdfDoc.save();
+				console.log("redacted pdf bytes---->", bytes)
                 // 🔥 Upload instead of saving locally
                 const uploadResponse = await fetch(
                         redactedUuploadFileUrl,
