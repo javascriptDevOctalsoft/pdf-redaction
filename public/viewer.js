@@ -542,11 +542,12 @@ async function saveRotatedPdfIfNeeded() {
 
         // call rotation API
 		console.log("docFileID---->", docFileID);
-        await fetch(storeRotatedFileApiUrl, {
+        //await fetch(storeRotatedFileApiUrl, {
+        await fetch(`${storeRotatedFileApiUrl}?FILE_ID=${docFileID}`, {
             method: "POST",
             headers: {
 				"Content-Type": "application/pdf",
-                "FILE_ID": docFileID
+                // "FILE_ID": docFileID
             },
             body: rotatedBlob
         });
