@@ -21,7 +21,7 @@ if(docStatus != 1){
 if(wsName == "rsdv_zydus_live"){
 	document.getElementById("rotateRight").style.display= "none";
 }else{
-	document.getElementById("rotateRight").style.display= "block";
+	document.getElementById("rotateRight").style.display= "flex";
 }
 //console.log("wsName--->", wsName);
 let prevSelPage = urlParams.get('prevSelPage');
