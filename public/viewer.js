@@ -588,7 +588,7 @@ async function sendRedactions(){
 		});
 		activeTool = null;
 		canvas.style.cursor = "default";
-	}, 1000)
+	}, 500)
 
 }
 
