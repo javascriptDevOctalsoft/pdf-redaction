@@ -266,6 +266,7 @@ function rotatePage(angle) {
 	//console.log("rotatePage--->", rotatePage, "angle--->", angle);
     const currentRotation = pageRotations[curPageNo] || 0;
     pageRotations[curPageNo] = (currentRotation + angle) % 360;
+	console.log("pageRotations---->", pageRotations)
     renderPage(curPageNo);
 }
 
@@ -415,6 +416,7 @@ canvas.addEventListener("mouseup", e => {
     // 🔥 Convert BOTH points to PDF space
     const [pdfStartX, pdfStartY] = currentViewport.convertToPdfPoint(startX, startY);
     const [pdfEndX, pdfEndY] = currentViewport.convertToPdfPoint(endX, endY);
+	console.log("pageRotations---->", pageRotations)
 	const pageRotation = pageRotations[curPageNo] || 0;
     const newRedaction = {
         page: curPageNo,
