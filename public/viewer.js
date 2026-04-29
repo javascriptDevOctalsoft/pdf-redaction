@@ -18,6 +18,11 @@ if(docStatus != 1){
         document.getElementById("undoBtn").style.color = "#515172";
         document.getElementById("sendRedactions").style.color = "#515172";
 }
+if(wsName == "rsdv_zydus_live"){
+	document.getElementById("rotateRight").style.display= "none";
+}else{
+	document.getElementById("rotateRight").style.display= "block";
+}
 //console.log("wsName--->", wsName);
 let prevSelPage = urlParams.get('prevSelPage');
 let zoomStatus = urlParams.get('zoomStatus');
