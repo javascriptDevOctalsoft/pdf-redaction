@@ -543,12 +543,11 @@ async function saveRotatedPdfIfNeeded() {
 		//const bufferData = await rotatedBlob.arrayBuffer();
         // call rotation API
 		console.log("docFileID---->", docFileID);
-        //await fetch(storeRotatedFileApiUrl, {
-        await fetch(`${storeRotatedFileApiUrl}?FILE_ID=${docFileID}`, {
+        await fetch(storeRotatedFileApiUrl, {
+        //await fetch(`${storeRotatedFileApiUrl}?FILE_ID=${docFileID}`, {
             method: "POST",
             headers: {
-				"Content-Type": "application/pdf",
-                // "FILE_ID": docFileID
+                "FILE_ID": docFileID
             },
             body: rotatedBlob
         });
@@ -561,7 +560,7 @@ async function saveRotatedPdfIfNeeded() {
 
 async function sendRedactions(){
 	// save rotated PDF first (if needed)
-	await saveRotatedPdfIfNeeded();
+	//await saveRotatedPdfIfNeeded();
     // Construct the payload including your extracted values
 	setTimeout(function(){
 		const payload = {
@@ -589,7 +588,7 @@ async function sendRedactions(){
 		});
 		activeTool = null;
 		canvas.style.cursor = "default";
-	}, 2000)
+	}, 1000)
 
 }
 
