@@ -428,6 +428,7 @@ canvas.addEventListener("mouseup", e => {
     };
 	//console.log("newRedaction--->", newRedaction)
     redactions.push(newRedaction);
+	console.log("newRedaction--->", redactions)
     undoStack.push(newRedaction);
 	if(redactions.length > 0){
 		document.getElementById("sendRedactions").style.pointerEvents = "auto";
@@ -573,6 +574,7 @@ async function sendRedactions(){
 	
     // Construct the payload including your extracted values
 	setTimeout(function(){
+		console.log("redactions--->", redactions)
 		const payload = {
 			redactions: redactions,
 			docFileID: docFileID,
