@@ -2,8 +2,8 @@ import fs from "fs";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 import { PDFDocument, rgb } from "pdf-lib";
 
-const INPUT_FILE = "./input/CP_16_24_ECRF_testing.pdf";
-const OUTPUT_FILE = "./output/manual_redacted.pdf";
+// const INPUT_FILE = "./input/CP_16_24_ECRF_testing.pdf";
+// const OUTPUT_FILE = "./output/manual_redacted.pdf";
 
 //const curDocID= $v('APP_PTNT_DOC_FILES_ID');
 //console.log("curDocID---->", curDocID)
@@ -47,7 +47,7 @@ function getRectForPageRotation(pageWidth, pageHeight, r, pageRotation) {
   return { x, y, width, height };
 }
 export async function applyManualRedactions(redactions, docFileID, wsName) {
-		console.log("redactions---->", redactions)
+		//console.log("redactions---->", redactions)
         let pdfDoc = null;
 		let sendingBlobUrl= "", redactedUuploadFileUrl= "";
 		if(wsName == "rsdv_zydus_test"){
@@ -106,7 +106,7 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
 							width : r.width,
 							height : r.height,
 					}
-					console.log("rect 102----->", rect);
+					//console.log("rect 102----->", rect);
 					page.drawRectangle({
 						x: rect.x,
 						y: rect.y,
@@ -117,7 +117,7 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
 				});
 
                 const bytes = await pdfDoc.save();
-				console.log("redacted pdf bytes---->", bytes)
+				//console.log("redacted pdf bytes---->", bytes)
                 // 🔥 Upload instead of saving locally
                 const uploadResponse = await fetch(
                         redactedUuploadFileUrl,
@@ -135,8 +135,8 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
                         throw new Error("Failed to upload redacted PDF");
                 }
 
-                console.log("PDF uploaded successfully");
-                console.log(uploadResponse);
+                //console.log("PDF uploaded successfully");
+                //console.log(uploadResponse);
                 //const result = await uploadResponse.json();
                 return uploadResponse.status;
         } catch (err) {
