@@ -47,7 +47,7 @@ function getRectForPageRotation(pageWidth, pageHeight, r, pageRotation) {
   return { x, y, width, height };
 }
 export async function applyManualRedactions(redactions, docFileID, wsName) {
-		//console.log("redactions---->", redactions)
+		console.log("redactions---->", redactions)
         let pdfDoc = null;
 		let sendingBlobUrl= "", redactedUuploadFileUrl= "";
 		if(wsName == "rsdv_zydus_test"){
