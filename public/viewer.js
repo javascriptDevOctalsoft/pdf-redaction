@@ -136,7 +136,7 @@ loadPdfFromAPI(docFileID);
                 }else if(zoomStatus == "OUT"){
                         document.getElementById("pdfCanvas").removeAttribute("style");
                 }
-                console.log(pdfDoc);
+                //console.log(pdfDoc);
         })
         .catch(function(error) {
                 console.error("Error loading PDF:", error);
@@ -266,7 +266,7 @@ function rotatePage(angle) {
 	//console.log("rotatePage--->", rotatePage, "angle--->", angle);
     const currentRotation = pageRotations[curPageNo] || 0;
     pageRotations[curPageNo] = (currentRotation + angle) % 360;
-	console.log("pageRotations---->", pageRotations)
+	//console.log("pageRotations---->", pageRotations)
     renderPage(curPageNo);
 }
 
@@ -416,7 +416,7 @@ canvas.addEventListener("mouseup", e => {
     // 🔥 Convert BOTH points to PDF space
     const [pdfStartX, pdfStartY] = currentViewport.convertToPdfPoint(startX, startY);
     const [pdfEndX, pdfEndY] = currentViewport.convertToPdfPoint(endX, endY);
-	console.log("pageRotations---->", pageRotations)
+	//console.log("pageRotations---->", pageRotations)
 	const pageRotation = pageRotations[curPageNo] || 0;
     const newRedaction = {
         page: curPageNo,
@@ -505,7 +505,7 @@ async function generateRotatedPdfBlob(originalArrayBuffer) {
     Object.keys(pageRotations).forEach(pageNum => {
         const index = parseInt(pageNum) - 1;
         const rotation = pageRotations[pageNum];
-		console.log("line no 501", pages[index] , rotation)
+		//console.log("line no 501", pages[index] , rotation)
         if (pages[index] && rotation !== 0) {
             pages[index].setRotation(degrees(rotation));
         }
@@ -546,10 +546,10 @@ async function saveRotatedPdfIfNeeded() {
 
         // generate rotated version
         const rotatedBlob = await generateRotatedPdfBlob(arrayBuffer);
-		console.log("rotatedBlob--->", rotatedBlob)
+		//console.log("rotatedBlob--->", rotatedBlob)
 		//const bufferData = await rotatedBlob.arrayBuffer();
         // call rotation API
-		console.log("docFileID---->", docFileID);
+		//console.log("docFileID---->", docFileID);
         await fetch(storeRotatedFileApiUrl, {
         //await fetch(`${storeRotatedFileApiUrl}?FILE_ID=${docFileID}`, {
             method: "POST",
@@ -558,7 +558,7 @@ async function saveRotatedPdfIfNeeded() {
             },
             body: rotatedBlob
         });
-        console.log("Rotated PDF saved successfully");
+        //console.log("Rotated PDF saved successfully");
     } catch (err) {
         console.error("Rotation API failed:", err);
         throw err;
