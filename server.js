@@ -1,6 +1,6 @@
 import express from "express";
 import fs from "fs";
-import { applyManualRedactions } from "./src/applyManualRedactions.js";
+import { applyManualRedactions, saveRotatedFileBlob } from "./src/applyManualRedactions.js";
 
 const app = express();
 app.use(express.json());
@@ -27,6 +27,21 @@ app.post("/redact", async (req, res) => {
     console.error("Redaction failed:", error);
     res.status(500).send("Error processing redactions.");
   }
+});
+
+app.post("/saveRotation", async (req, res) => {
+        //const { redactions, ogUrl, docFileID } = req.body;
+        const { rotations, docFileID, wsName } = req.body;
+  try {
+		//console.log('working')
+		const output = await saveRotatedFileBlob(rotations, docFileID, wsName);
+		res.status(200).send("Rotated File stored Successfully");
+		console.log(output);
+		//res.download(output);
+	} catch (error) {
+		console.error("Rotated File Saving failed:", error);
+		res.status(500).send("Error saving rotation.");
+	}
 });
 
 app.listen(3000, () => console.log("Server running on port 3000"));
