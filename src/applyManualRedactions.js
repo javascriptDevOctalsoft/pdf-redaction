@@ -146,7 +146,7 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
 export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 	console.log("rotations---->", pageRotations)
 	let rotPdfDoc = null;
-	let sendingBlobUrl= "", redactedUuploadFileUrl= "";
+	let sendingBlobUrl= "", redactedUuploadFileUrl= "", storeRotatedFileApiUrl= "";
 	if(wsName == "rsdv_zydus_test"){
 		sendingBlobUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
 		redactedUuploadFileUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileReceive/getFile";
