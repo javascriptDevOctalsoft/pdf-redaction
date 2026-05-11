@@ -143,3 +143,71 @@ export async function applyManualRedactions(redactions, docFileID, wsName) {
                 console.error("Error:", err);
         }
 }
+export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
+	console.log("rotations---->", pageRotations)
+	let rotPdfDoc = null;
+	let sendingBlobUrl= "", redactedUuploadFileUrl= "";
+	if(wsName == "rsdv_zydus_test"){
+		sendingBlobUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
+		redactedUuploadFileUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileReceive/getFile";
+		storeRotatedFileApiUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/getFile1/rotatedFile";
+	}else{
+		sendingBlobUrl= "https://ins6.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
+		redactedUuploadFileUrl= "https://ins6.octalsoft.com/apex/"+wsName+"/fileReceive/getFile";
+	}
+	try {
+			const response = await fetch(
+					sendingBlobUrl,
+					{
+							method: "POST",
+							headers: {
+									"Content-Type": "application/json"
+							},
+							body: JSON.stringify({
+									FILE_ID: docFileID
+							})
+					}
+			);
+
+			if (!response.ok) {
+					throw new Error("Failed to fetch PDF");
+			}
+
+			const arrayBuffer = await response.arrayBuffer();
+			rotPdfDoc = await PDFDocument.load(arrayBuffer);
+			const pages = rotPdfDoc.getPages();
+			Object.keys(pageRotations).forEach(pageNum => {
+				const index = parseInt(pageNum) - 1;
+				const rotation = pageRotations[pageNum];
+				//console.log("line no 501", pages[index] , rotation)
+				if (pages[index] && rotation !== 0) {
+					pages[index].setRotation(degrees(rotation));
+				}
+			});
+			const rotatedFileBytes = await rotPdfDoc.save();
+			//console.log("redacted pdf bytes---->", bytes)
+			// 🔥 Upload instead of saving locally
+			const uploadRotResp = await fetch(
+					storeRotatedFileApiUrl,
+					{
+							method: "POST",
+							headers: {
+								"Content-Type": "application/pdf",
+								"FILE_ID": docFileID
+							},
+							body: rotatedFileBytes
+					}
+			);
+
+			if (!uploadRotResp.ok) {
+					throw new Error("Failed to upload redacted PDF");
+			}
+
+			//console.log("PDF uploaded successfully");
+			//console.log(uploadResponse);
+			//const result = await uploadResponse.json();
+			return uploadRotResp.status;
+	} catch (err) {
+			console.error("Error:", err);
+	}
+}
