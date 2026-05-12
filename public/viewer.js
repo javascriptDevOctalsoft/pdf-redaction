@@ -592,7 +592,7 @@ async function sendRedactions(){
 	}
 	
     // Construct the payload including your extracted values
-	setTimeout(function(){
+	/* setTimeout(function(){
 		console.log("redactions--->", redactions)
 		const payload = {
 			redactions: redactions,
@@ -619,7 +619,7 @@ async function sendRedactions(){
 		});
 		activeTool = null;
 		canvas.style.cursor = "default";
-	}, 500)
+	}, 500) */
 
 }
 
