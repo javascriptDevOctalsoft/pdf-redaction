@@ -1,6 +1,6 @@
 import fs from "fs";
 import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
-import { PDFDocument, rgb } from "pdf-lib";
+import { PDFDocument, rgb, degrees} from "pdf-lib";
 
 // const INPUT_FILE = "./input/CP_16_24_ECRF_testing.pdf";
 // const OUTPUT_FILE = "./output/manual_redacted.pdf";
@@ -149,11 +149,9 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 	let sendingBlobUrl= "", redactedUuploadFileUrl= "", storeRotatedFileApiUrl= "";
 	if(wsName == "rsdv_zydus_test"){
 		sendingBlobUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
-		redactedUuploadFileUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/fileReceive/getFile";
 		storeRotatedFileApiUrl= "https://bkp2.octalsoft.com/apex/"+wsName+"/getFile1/rotatedFile";
 	}else{
 		sendingBlobUrl= "https://ins6.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
-		redactedUuploadFileUrl= "https://ins6.octalsoft.com/apex/"+wsName+"/fileReceive/getFile";
 	}
 	try {
 			const response = await fetch(
