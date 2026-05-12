@@ -177,8 +177,8 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 			Object.keys(pageRotations).forEach(pageNum => {
 				const index = parseInt(pageNum) - 1;
 				const rotation = pageRotations[pageNum];
-				//console.log("line no 501", pages[index] , rotation)
 				if (pages[index] && rotation !== 0) {
+					console.log("line no 501", pages[index] , rotation)
 					pages[index].setRotation(degrees(rotation));
 				}
 			});
