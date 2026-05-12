@@ -176,9 +176,12 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 			const pages = rotPdfDoc.getPages();
 			Object.keys(pageRotations).forEach(pageNum => {
 				const index = parseInt(pageNum) - 1;
-				const rotation = pageRotations[pageNum];
-				if (pages[index] && rotation !== 0) {
+				const rotation = Number(pageRotations[pageNum]);
+				/* if (pages[index] && rotation !== 0){
 					console.log("line no 501", pages[index] , rotation)
+					pages[index].setRotation(degrees(rotation));
+				} */
+				if(pages[index] && [0, 90, 180, 270].includes(rotation)){
 					pages[index].setRotation(degrees(rotation));
 				}
 			});
