@@ -154,7 +154,7 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 		sendingBlobUrl= "https://ins6.octalsoft.com/apex/"+wsName+"/fileshare/sendingBlobID";
 	}
 	try {
-			const response = await fetch(
+			const response1 = await fetch(
 					sendingBlobUrl,
 					{
 							method: "POST",
@@ -167,13 +167,13 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 					}
 			);
 
-			if (!response.ok) {
+			if (!response1.ok) {
 					throw new Error("Failed to fetch PDF");
 			}
 
-			const arrayBuffer = await response.arrayBuffer();
-			rotPdfDoc = await PDFDocument.load(arrayBuffer);
-			const pages = rotPdfDoc.getPages();
+			const arrayBuffer1 = await response1.arrayBuffer();
+			rotPdfDoc = await PDFDocument.load(arrayBuffer1);
+			const pages1 = rotPdfDoc.getPages();
 			Object.keys(pageRotations).forEach(pageNum => {
 				const index = parseInt(pageNum) - 1;
 				const rotation = Number(pageRotations[pageNum]);
@@ -181,8 +181,8 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 					console.log("line no 501", pages[index] , rotation)
 					pages[index].setRotation(degrees(rotation));
 				} */
-				if(pages[index] && [0, 90, 180, 270].includes(rotation)){
-					pages[index].setRotation(degrees(rotation));
+				if(pages1[index] && [0, 90, 180, 270].includes(rotation)){
+					pages1[index].setRotation(degrees(rotation));
 				}
 			});
 			const rotatedFileBytes = await rotPdfDoc.save();
@@ -202,7 +202,7 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 			);
 
 			if (!uploadRotResp.ok) {
-					throw new Error("Failed to upload rotated PDF");
+					throw new Error("Failed to upload redacted PDF");
 			}
 
 			//console.log("PDF uploaded successfully");
