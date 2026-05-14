@@ -186,7 +186,11 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 				}
 			});
 			const rotatedFileBytes = await rotPdfDoc.save();
-		console.log("rotatedFileBytes---->", rotatedFileBytes)
+			console.log("rotatedFileBytes---->", rotatedFileBytes)
+			const pdfBlob = new Blob(
+			   [rotatedFileBytes],
+			   { type: "application/pdf" }
+			);
 			fs.writeFileSync("rotated-test.pdf", rotatedFileBytes);
 			//console.log("redacted pdf bytes---->", bytes)
 			// 🔥 Upload instead of saving locally
@@ -198,7 +202,7 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 								"Content-Type": "application/pdf",
 								"FILE_ID": docFileID
 							},
-							body: rotatedFileBytes
+							body: pdfBlob
 					}
 			);
 			console.log("uploadRotResp->", uploadRotResp)
