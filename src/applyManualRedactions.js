@@ -201,7 +201,7 @@ export async function saveRotatedFileBlob(pageRotations, docFileID, wsName) {
 							body: rotatedFileBytes
 					}
 			);
-
+			console.log("uploadRotResp->", uploadRotResp)
 			if (!uploadRotResp.ok) {
 					throw new Error("Failed to upload redacted PDF");
 			}
