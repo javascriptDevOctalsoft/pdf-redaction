@@ -18,7 +18,7 @@ app.post("/redact", async (req, res) => {
         //const { redactions, ogUrl, docFileID } = req.body;
         const { redactions, docFileID, wsName } = req.body;
   try {
-        //console.log('working')
+        console.log('working')
     const output = await applyManualRedactions(redactions, docFileID, wsName);
 	res.status(200).send("Redacted File stored Successfully");
     console.log(output);
