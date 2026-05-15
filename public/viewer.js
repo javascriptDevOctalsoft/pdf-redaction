@@ -568,28 +568,28 @@ async function saveRotatedPdfIfNeeded() {
 
 async function sendRedactions(){
 	// save rotated PDF first (if needed)
-	if(wsName == "rsdv_zydus_test"){
-		//await saveRotatedPdfIfNeeded();
-		const hasRotation = Object.values(pageRotations).some(r => r !== 0);
-		if (!hasRotation) return;
-		try {
-			const payload = {
-				rotations: pageRotations,
-				docFileID: docFileID,
-				wsName: wsName
-			};
-			// fetch original PDF again
-			const rotResp = await fetch("/saveRotation", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload)
-			});
-			console.log("rotResp------->", rotResp);
-		} catch (err) {
-			console.error("Rotation API failed:", err);
-			throw err;
-		}
-	}
+	// if(wsName == "rsdv_zydus_test"){
+	// 	//await saveRotatedPdfIfNeeded();
+	// 	const hasRotation = Object.values(pageRotations).some(r => r !== 0);
+	// 	if (!hasRotation) return;
+	// 	try {
+	// 		const payload = {
+	// 			rotations: pageRotations,
+	// 			docFileID: docFileID,
+	// 			wsName: wsName
+	// 		};
+	// 		// fetch original PDF again
+	// 		const rotResp = await fetch("/saveRotation", {
+	// 			method: "POST",
+	// 			headers: { "Content-Type": "application/json" },
+	// 			body: JSON.stringify(payload)
+	// 		});
+	// 		console.log("rotResp------->", rotResp);
+	// 	} catch (err) {
+	// 		console.error("Rotation API failed:", err);
+	// 		throw err;
+	// 	}
+	// }
 	
     // Construct the payload including your extracted values
 	setTimeout(function(){
